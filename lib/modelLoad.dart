@@ -9,7 +9,7 @@ import 'package:tflite/tflite.dart';
 
 const int kModelInputSize = 28;
 const double kCanvasInnerOffset = 40.0;
-const double kCanvasSize = 400;
+const double kCanvasSize = 200;
 final kBackgroundPaint = Paint()..color = kBrushBlack;
 
 class ModelT {

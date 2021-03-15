@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: CupertinoColors.activeOrange,
                   ),
                 ),
-                height: 500,
+                height: 300,
                 padding: EdgeInsets.all(8),
                 child: Builder(
                   builder: (BuildContext context) {
