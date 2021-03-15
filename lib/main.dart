@@ -1,3 +1,5 @@
+import 'dart:ui';
+import 'package:d/model.dart';
 import 'package:d/modelLoad.dart';
 import 'package:d/paint.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,17 +22,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-const double kCanvasSize = 200;
-
 class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  ModelT model = ModelT();
   List<Offset> points = [];
-
+  ModelT model = ModelT();
+  List pred = [];
+  List<ModelCal> hf = [];
   @override
   void initState() {
     super.initState();
@@ -49,12 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(
-                    width: 8.0,
+                    width: 3.0,
                     color: CupertinoColors.activeOrange,
                   ),
                 ),
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.85,
+                height: 500,
                 padding: EdgeInsets.all(8),
                 child: Builder(
                   builder: (BuildContext context) {
@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       onPanStart: (details) {
                         setState(() {
+                          hf = [];
                           RenderBox renderBox = context.findRenderObject();
                           points.add(
                               renderBox.globalToLocal(details.globalPosition));
@@ -75,8 +76,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       onPanEnd: (details) async {
                         points.add(null);
-                        List pred = await model.canvasPt(points);
-                        print(pred);
+
+                        pred = await model.canvasPt(points);
+                        pred.forEach((element) {
+                          hf.add(ModelCal.fromJson(element));
+                        });
+
                         setState(() {});
                       },
                       child: ClipRRect(
@@ -91,6 +96,29 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 ),
               ),
+              SizedBox(height: 20),
+              Expanded(
+                  child: Container(
+                child: ListView(
+                  children: hf
+                      .map(
+                        (e) => Center(
+                          child: Text(
+                            "Label " +
+                                e.label +
+                                "\nConfidence " +
+                                e.confidence.round().toString(),
+                            style: TextStyle(
+                              color: CupertinoColors.activeBlue,
+                              fontSize: 17.0,
+                              fontFamily: 'SourceSansPro',
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              )),
               Expanded(
                 flex: 1,
                 child: Container(
@@ -104,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: () {
                             setState(() {
                               points = [];
+                              hf = [];
                             });
                           })
                     ],
